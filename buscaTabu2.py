@@ -9,11 +9,9 @@ import matplotlib.pyplot as plt
 # f(x) = -sum_{i=1}^{d} sin(xi) * sin^(2m)( i*xi² / pi )
 # d=2, m=10, domínio: 0 <= x1, x2 <= pi
 
-
 D = 2
 M = 10
-X_MIN, X_MAX = 0.0, math.pi
-#X_MIN, X_MAX = 1.0, 2.5
+
 
 def f(x: list) -> float:
     total = 0.0
@@ -22,10 +20,18 @@ def f(x: list) -> float:
         total += math.sin(xi) * (math.sin(i * xi**2 / math.pi)) ** (2 * M)
     return -total
 
-def clamp(x: list) -> list:
+def maxEmin(numero):
+    if numero == 1:
+        X_MIN, X_MAX = 0.0, math.pi
+        return X_MIN, X_MAX
+
+    elif numero == 2:
+        X_MIN, X_MAX = 1.0, 2.5
+        return X_MIN, X_MAX
+
+def clamp(x: list, X_MIN: float, X_MAX: float) -> list:
     return [max(X_MIN, min(X_MAX, xi)) for xi in x]
 
-# ─── Busca Tabu contínua ───────────────────────────────────────────────────────
 def busca_tabu(
     tamanho_tabu   = 12,
     max_iteracoes  = 500,
@@ -34,7 +40,12 @@ def busca_tabu(
     fator_reducao  = 0.98,
     raio_tabu      = 0.02,
     verbose        = True,
+    limites         = 1
 ):
+    # Pega os limites especificados no tp
+    X_MIN, X_MAX = maxEmin(limites)
+    print(f"Limites: X_MIN = {X_MIN}, X_MAX = {X_MAX}")
+
     # Solução inicial aleatória
     x = [random.uniform(X_MIN, X_MAX) for _ in range(D)]
     custo_atual = f(x)
@@ -63,7 +74,7 @@ def busca_tabu(
             delta = [random.gauss(0, 1) for _ in range(D)]
             norm  = math.sqrt(sum(d**2 for d in delta)) or 1e-9
             r     = random.uniform(0.1, 1.0) * passo
-            nx    = clamp([x[i] + r * delta[i] / norm for i in range(D)])
+            nx    = clamp([x[i] + r * delta[i] / norm for i in range(D)], X_MIN, X_MAX)
             nc    = f(nx)
 
             tabu = any(
@@ -123,8 +134,10 @@ def busca_tabu(
         "aspiracoes": aspiracoes,
     }
 
-# ─── Visualização ──────────────────────────────────────────────────────────────
-def visualizar(resultado):
+def visualizar(resultado, dominio=1, iteracao=1):
+
+    X_MIN, X_MAX = maxEmin(dominio)
+
     fig = plt.figure(figsize=(18, 6))
     fig.suptitle(
         r"Busca Tabu — Função de Michalewicz   $f(\mathbf{x}) = -\sum_{i=1}^{d}\sin(x_i)\,\sin^{2m}\!\left(\frac{i\,x_i^2}{\pi}\right)$"
@@ -211,20 +224,35 @@ def visualizar(resultado):
         bbox=dict(boxstyle="round,pad=0.45", fc="white", ec="#CCCCCC", alpha=0.92)
     )
 
-    plt.tight_layout()
-    plt.savefig("data/busca_tabu_funcC.png", dpi=150, bbox_inches="tight")
-    print("\nGráfico salvo em: data/busca_tabu_funcC.png")
+    if dominio == 1:
+        plt.tight_layout()
+        plt.savefig("data/{}busca_tabu_funcA.png".format(iteracao), dpi=150, bbox_inches="tight")
+        print("\nGráfico salvo em: data/{}busca_tabu_funcA.png".format(iteracao))
+    elif dominio == 2:
+        plt.tight_layout()
+        plt.savefig("data/{}busca_tabu_funcB.png".format(iteracao), dpi=150, bbox_inches="tight")
+        print("\nGráfico salvo em: data/{}busca_tabu_funcB.png".format(iteracao))
 
 # ─── Main ──────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    random.seed(42)
-    resultado = busca_tabu(
-        tamanho_tabu  = 12,
-        max_iteracoes = 500,
-        n_vizinhos    = 40,
-        passo_inicial = 1.0,
-        fator_reducao = 0.98,
-        raio_tabu     = 0.02,
-        verbose       = True,
-    )
-    visualizar(resultado)
+
+    #30 seeds diferentes para testar a robustez do algoritmo
+    seeds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 ,
+             21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
+
+
+    for seed in seeds:
+        random.seed(seed)
+        #random.seed(42)
+        dominio = 1 # 1 ou 2
+        resultado = busca_tabu(
+            tamanho_tabu  = 12,
+            max_iteracoes = 500,
+            n_vizinhos    = 40,
+            passo_inicial = 1.0,
+            fator_reducao = 0.98,
+            raio_tabu     = 0.02,
+            verbose       = True,
+            limites       = dominio
+        )
+        visualizar(resultado, dominio=dominio, iteracao=seed)

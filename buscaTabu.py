@@ -16,16 +16,20 @@ import os
 def f(x1, x2):
     return 100.0 * math.sqrt(abs(x2 - 0.01 * x1**2)) + 0.01 * abs(x1 + 10)
 
-# Restrições do domínio
-#X1_MIN, X1_MAX = -15.0, -5.0
-#X2_MIN, X2_MAX = -3.0,   3.0
-X1_MIN, X1_MAX = -11.0, -9.0
-X2_MIN, X2_MAX = 0.0, 2.0
+def maxEmin(numero):
+    if numero == 1:
+        X1_MIN, X1_MAX = -15.0, -5.0 
+        X2_MIN, X2_MAX =  -3.0,  3.0   
+        return X1_MIN, X1_MAX, X2_MIN, X2_MAX
 
-def clamp(x1, x2):
+    elif numero == 2:
+        X1_MIN, X1_MAX = -11.0, -9.0   
+        X2_MIN, X2_MAX =   0.0,  2.0 
+        return X1_MIN, X1_MAX, X2_MIN, X2_MAX
+
+def clamp(x1, x2, X1_MIN, X1_MAX, X2_MIN, X2_MAX):
     return max(X1_MIN, min(X1_MAX, x1)), max(X2_MIN, min(X2_MAX, x2))
 
-# ─── Busca Tabu contínua ───────────────────────────────────────────────────────
 def busca_tabu(
     tamanho_tabu   = 10,
     max_iteracoes  = 300,
@@ -33,7 +37,14 @@ def busca_tabu(
     passo_inicial  = 2.0,
     fator_reducao  = 0.98,
     verbose        = True,
+    limites         = 1
 ):
+    
+
+    #Pega os limites especificados no tp
+    X1_MIN, X1_MAX, X2_MIN, X2_MAX = maxEmin(limites)
+
+
     # Solução inicial aleatória
     x1 = random.uniform(X1_MIN, X1_MAX)
     x2 = random.uniform(X2_MIN, X2_MAX)
@@ -64,7 +75,7 @@ def busca_tabu(
             r   = random.uniform(0.1, 1.0) * passo
             nx1 = x1 + r * math.cos(ang)
             nx2 = x2 + r * math.sin(ang)
-            nx1, nx2 = clamp(nx1, nx2)
+            nx1, nx2 = clamp(nx1, nx2, X1_MIN, X1_MAX, X2_MIN, X2_MAX)
             nc = f(nx1, nx2)
 
             # Verifica se está na lista tabu (por proximidade)
@@ -129,8 +140,11 @@ def busca_tabu(
         "aspiracoes": aspiracoes,
     }
 
-# ─── Visualização ──────────────────────────────────────────────────────────────
-def visualizar(resultado):
+def visualizar(resultado, dominio=1):
+
+    X1_MIN, X1_MAX, X2_MIN, X2_MAX = maxEmin(dominio)
+
+
     fig = plt.figure(figsize=(16, 6))
     fig.suptitle(
         r"Busca Tabu — $f(x_1, x_2) = 100\sqrt{|x_2 - 0.01\,x_1^2|} + 0.01\,|x_1 + 10|$",
@@ -210,6 +224,7 @@ def visualizar(resultado):
 # ─── Main ──────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     random.seed(99)
+    dominio = 1 
     resultado = busca_tabu(
         tamanho_tabu  = 12,
         max_iteracoes = 300,
@@ -217,5 +232,6 @@ if __name__ == "__main__":
         passo_inicial = 2.5,
         fator_reducao = 0.97,
         verbose       = True,
+        limites       = dominio
     )
-    visualizar(resultado)
+    visualizar(resultado, dominio=dominio)

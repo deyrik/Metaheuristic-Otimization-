@@ -8,9 +8,16 @@ import matplotlib.pyplot as plt
 # ─── Função de Michalewicz ─────────────────────────────────────────────────────
 D = 2
 M = 10
-#X_MIN, X_MAX = 0.0, math.pi
-X_MIN, X_MAX = 1.0, 2.5
 
+
+def maxEmin(numero):
+    if numero == 1:
+        X_MIN, X_MAX = 0.0, math.pi
+        return X_MIN, X_MAX
+
+    elif numero == 2:
+        X_MIN, X_MAX = 1.0, 2.5
+        return X_MIN, X_MAX
 
 def f(x: list) -> float:
     total = 0.0
@@ -19,10 +26,9 @@ def f(x: list) -> float:
         total += math.sin(xi) * (math.sin(i * xi**2 / math.pi)) ** (2 * M)
     return -total
 
-def clamp(x: list) -> list:
+def clamp(x: list, X_MIN: float, X_MAX: float) -> list:
     return [max(X_MIN, min(X_MAX, xi)) for xi in x]
 
-# ─── Simulated Annealing ───────────────────────────────────────────────────────
 def simulated_annealing(
     T_inicial      = 10.0,
     T_final        = 1e-5,
@@ -30,7 +36,10 @@ def simulated_annealing(
     iter_por_T     = 50,      # iterações por temperatura
     passo          = 0.5,     # amplitude da perturbação
     verbose        = True,
+    dominio        = 1
 ):
+    
+    X_MIN, X_MAX = maxEmin(dominio)
     # Solução inicial aleatória
     x = [random.uniform(X_MIN, X_MAX) for _ in range(D)]
     custo_atual = f(x)
@@ -57,7 +66,7 @@ def simulated_annealing(
         for _ in range(iter_por_T):
             # Perturbação gaussiana
             delta = [random.gauss(0, passo) for _ in range(D)]
-            nx = clamp([x[i] + delta[i] for i in range(D)])
+            nx = clamp([x[i] + delta[i] for i in range(D)], X_MIN, X_MAX)
             nc = f(nx)
 
             delta_custo = nc - custo_atual
@@ -115,8 +124,10 @@ def simulated_annealing(
         "n_epocas": n_epocas,
     }
 
-# ─── Visualização ──────────────────────────────────────────────────────────────
-def visualizar(resultado):
+def visualizar(resultado, dominio=1):
+    
+    X_MIN, X_MAX = maxEmin(dominio)
+
     fig = plt.figure(figsize=(20, 6))
     fig.suptitle(
         r"Simulated Annealing — Função de Michalewicz"
@@ -232,12 +243,13 @@ def visualizar(resultado):
     ax4.legend(lines1 + lines2, labels1 + labels2, fontsize=8, loc="center right")
 
     plt.tight_layout()
-    plt.savefig("data/simulated_annealing_michalewiczD.png", dpi=150, bbox_inches="tight")
-    print("Gráfico salvo: simulated_annealing_michalewiczD.png")
+    plt.savefig("data/simulated_annealing_michalewiczDDD.png", dpi=150, bbox_inches="tight")
+    print("Gráfico salvo: simulated_annealing_michalewiczDDD.png")
 
 # ─── Main ──────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     random.seed(42)
+    dominio = 1  
     resultado = simulated_annealing(
         T_inicial   = 10.0,
         T_final     = 1e-5,
@@ -245,5 +257,6 @@ if __name__ == "__main__":
         iter_por_T  = 50,
         passo       = 0.5,
         verbose     = True,
+        dominio     = dominio
     )
-    visualizar(resultado)
+    visualizar(resultado, dominio=dominio)

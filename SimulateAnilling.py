@@ -7,16 +7,23 @@ import matplotlib.pyplot as plt
 # f(x1, x2) = 100 * sqrt(|x2 - 0.01*x1²|) + 0.01 * |x1 + 10|
 # Domínio: -15 <= x1 <= -5,  -3 <= x2 <= 3
 
-# Restrições do domínio
-X1_MIN, X1_MAX = -15.0, -5.0
-X2_MIN, X2_MAX = -3.0,   3.0
-#X1_MIN, X1_MAX = -11.0, -9.0
-#X2_MIN, X2_MAX = 0.0, 2.0
+
 
 def f(x1, x2):
     return 100.0 * math.sqrt(abs(x2 - 0.01 * x1**2)) + 0.01 * abs(x1 + 10)
 
-def clamp(x1, x2):
+def maxEmin(numero):
+    if numero == 1:
+        X1_MIN, X1_MAX = -15.0, -5.0 
+        X2_MIN, X2_MAX =  -3.0,  3.0   
+        return X1_MIN, X1_MAX, X2_MIN, X2_MAX
+
+    elif numero == 2:
+        X1_MIN, X1_MAX = -11.0, -9.0   
+        X2_MIN, X2_MAX =   0.0,  2.0 
+        return X1_MIN, X1_MAX, X2_MIN, X2_MAX
+
+def clamp(x1, x2, X1_MIN, X1_MAX, X2_MIN, X2_MAX):
     return max(X1_MIN, min(X1_MAX, x1)), max(X2_MIN, min(X2_MAX, x2))
 
 # ─── Simulated Annealing ───────────────────────────────────────────────────────
@@ -27,7 +34,11 @@ def simulated_annealing(
     iter_por_T  = 60,
     passo       = 1.5,
     verbose     = True,
+    dominio     = 1
 ):
+    
+    X1_MIN, X1_MAX, X2_MIN, X2_MAX = maxEmin(dominio)
+
     x1 = random.uniform(X1_MIN, X1_MAX)
     x2 = random.uniform(X2_MIN, X2_MAX)
     custo_atual = f(x1, x2)
@@ -54,7 +65,7 @@ def simulated_annealing(
             # Perturbação gaussiana independente em cada eixo
             nx1 = x1 + random.gauss(0, passo)
             nx2 = x2 + random.gauss(0, passo * 0.4)   # x2 tem domínio menor
-            nx1, nx2 = clamp(nx1, nx2)
+            nx1, nx2 = clamp(nx1, nx2, X1_MIN, X1_MAX, X2_MIN, X2_MAX)
             nc = f(nx1, nx2)
 
             delta = nc - custo_atual
@@ -99,7 +110,7 @@ def simulated_annealing(
     }
 
 # ─── Visualização ──────────────────────────────────────────────────────────────
-def visualizar(resultado):
+def visualizar(resultado, dominio=1):
     fig = plt.figure(figsize=(20, 6))
     fig.suptitle(
         r"Simulated Annealing — $f(x_1,x_2)=100\sqrt{|x_2-0.01\,x_1^2|}+0.01\,|x_1+10|$"
@@ -108,6 +119,7 @@ def visualizar(resultado):
         fontsize=12, fontweight="bold"
     )
 
+    X1_MIN, X1_MAX, X2_MIN, X2_MAX = maxEmin(dominio)
     # Grade da superfície
     x1g = np.linspace(X1_MIN, X1_MAX, 300)
     x2g = np.linspace(X2_MIN, X2_MAX, 300)
@@ -223,5 +235,6 @@ if __name__ == "__main__":
         iter_por_T = 60,
         passo      = 1.5,
         verbose    = True,
+        dominio    = 1
     )
-    visualizar(resultado)
+    visualizar(resultado, dominio=1)
