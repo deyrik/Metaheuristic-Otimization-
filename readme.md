@@ -1,4 +1,4 @@
-# venv
+# INFOS
 
 ## Instalação e Gerenciamento
 
@@ -58,12 +58,41 @@ Ou em uma única linha:
 pip install numpy matplotlib scipy pandas
 ```
 
+## Estrutura do Projeto
+
+### Descrição dos Arquivos
+
+- **main.py**: Arquivo principal que coordena a execução dos algoritmos de otimização. Responsável por chamar os diferentes métodos de busca e gerenciar o fluxo geral do programa.
+
+- **buscaTabu.py**: Implementação do algoritmo **Tabu Search (Busca Tabu)** - uma metaheurística que utiliza memória para evitar revisitar soluções já exploradas, impedindo ciclos e melhorando a exploração do espaço de busca.
+
+- **buscaTabu2.py**: Implementação do **Tabu Search** adaptada para resolver um tipo diferente de função ou problema.
+
+- **SimulateAnilling.py**: Implementação do algoritmo **Simulated Annealing (Recozimento Simulado)** - metaheurística inspirada no processo de resfriamento de metais, que permite aceitar soluções piores com probabilidade decrescente para escapar de ótimos locais.
+
+- **SimulateAnilling2.py**: Implementação do **Simulated Annealing** adaptada para resolver um tipo diferente de função ou problema.
+
+- **backup.py**: Arquivo de backup ou utilitários para salvar/restaurar estados ou resultados dos algoritmos.
+
+### Pasta data/
+
+Armazena os resultados das execuções dos algoritmos:
+
+- **resultados.json**: Arquivo JSON contendo os resultados consolidados de todas as execuções. Este é o único arquivo versionado do diretório `data/`.
+
+- **BT_Func1_LimiteA/** e **BT_Func1_LimiteB/**: Resultados do Tabu Search aplicado à Função 1 com limites A e B.
+
+- **BT_Func2_LimiteA/** e **BT_Func2_LimiteB/**: Resultados do Tabu Search aplicado à Função 2 com limites A e B.
+
+- **SA_Func1_LimiteA/** e **SA_Func1_LimiteB/**: Resultados do Simulated Annealing aplicado à Função 1 com limites A e B.
+
+- **SA_Func2_LimiteA/** e **SA_Func2_LimiteB/**: Resultados do Simulated Annealing aplicado à Função 2 com limites A e B.
+
+Note: As subpastas não são versionadas no Git (conforme configurado no `.gitignore`), pois contêm dados de execução local.
 
 
 
 
 
 
-LINHA 207 (mudar nome do png gerado dependendo dos limites [linhas 19 a 23] )
 
-25% do tp feito 
