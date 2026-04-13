@@ -90,6 +90,38 @@ Armazena os resultados das execuções dos algoritmos:
 
 Note: As subpastas não são versionadas no Git (conforme configurado no `.gitignore`), pois contêm dados de execução local.
 
+## Como Executar
+
+### Executar o programa principal
+
+OBS: lembre-se de executar dentro do ambiente virtual (.venv).
+
+Para executar o programa completo que coordena todos os algoritmos:
+
+```bash
+python src/main.py
+```
+
+O `main.py` é responsável por orquestrar toda a execução, chamando os diferentes algoritmos e gerenciando o fluxo geral do programa.
+
+### Executar arquivos individuais
+
+Para testar ou executar um algoritmo específico isoladamente:
+
+```bash
+python src/buscaTabu.py
+python src/buscaTabu2.py
+python src/SimulateAnilling.py
+python src/SimulateAnilling2.py
+```
+
+### Diferenças
+
+| Execução | Comportamento |
+|----------|---------------|
+| **main.py** | Executa todos os algoritmos de forma coordenada, consolidando resultados e gerenciando o fluxo completo do programa. Ideal para rodar a análise completa. |
+| **Arquivos individuais** | Executa apenas um algoritmo específico em isolamento. Útil para testes, depuração ou análise de um algoritmo específico. |
+
 
 
 

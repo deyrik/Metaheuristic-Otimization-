@@ -8,8 +8,6 @@ import os
 # f(x1, x2) = 100 * sqrt(|x2 - 0.01*x1²|) + 0.01 * |x1 + 10|
 # Domínio: -15 <= x1 <= -5,  -3 <= x2 <= 3
 
-
-
 def f(x1, x2):
     return 100.0 * math.sqrt(abs(x2 - 0.01 * x1**2)) + 0.01 * abs(x1 + 10)
 

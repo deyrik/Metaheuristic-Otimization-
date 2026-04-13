@@ -1,14 +1,11 @@
-import buscaTabu as bt
-import buscaTabu2 as bt2
-import simulateAnilling as sa
-import simulateAnilling2 as sa2
+import src.buscaTabu as bt
+import src.buscaTabu2 as bt2
+import src.simulateAnilling as sa
+import src.simulateAnilling2 as sa2
 import random
 import numpy as np
 import json
 import os
-
-
-
 
 def rodar_30(algoritmo_fn, visualizar_fn, seeds, dominio, label_algo, label_func, label_dom, kwargs):
     """
