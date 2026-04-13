@@ -4,6 +4,8 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import os
+import sys
 
 # ─── Função de Michalewicz ─────────────────────────────────────────────────────
 # f(x) = -sum_{i=1}^{d} sin(xi) * sin^(2m)( i*xi² / pi )
@@ -224,14 +226,24 @@ def visualizar(resultado, dominio=1, iteracao=1):
         bbox=dict(boxstyle="round,pad=0.45", fc="white", ec="#CCCCCC", alpha=0.92)
     )
 
+    #Criando pastas e caminhos para salvar os gráficos  
+    raiz = "data"
+    os.makedirs(raiz, exist_ok=True)
+
     if dominio == 1:
-        plt.tight_layout()
-        plt.savefig("data/{}busca_tabu_funcA.png".format(iteracao), dpi=150, bbox_inches="tight")
-        print("\nGráfico salvo em: data/{}busca_tabu_funcA.png".format(iteracao))
+        pasta = os.path.join(raiz, "BT_Func2_LimiteA")
+        os.makedirs(pasta, exist_ok=True)
+        caminho = os.path.join(pasta, f"{iteracao}_busca_tabu_funcA.png")
+
     elif dominio == 2:
-        plt.tight_layout()
-        plt.savefig("data/{}busca_tabu_funcB.png".format(iteracao), dpi=150, bbox_inches="tight")
-        print("\nGráfico salvo em: data/{}busca_tabu_funcB.png".format(iteracao))
+        pasta = os.path.join(raiz, "BT_Func2_LimiteB")
+        os.makedirs(pasta, exist_ok=True)
+        caminho = os.path.join(pasta, f"{iteracao}_busca_tabu_funcB.png")
+
+    plt.tight_layout()
+    plt.savefig(caminho, dpi=150, bbox_inches="tight")
+    plt.close()
+    print(f"\nGráfico salvo em: {caminho}")
 
 # ─── Main ──────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
@@ -240,11 +252,11 @@ if __name__ == "__main__":
     seeds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 ,
              21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
 
+    dominio = 1 # 1 ou 2
 
     for seed in seeds:
         random.seed(seed)
         #random.seed(42)
-        dominio = 1 # 1 ou 2
         resultado = busca_tabu(
             tamanho_tabu  = 12,
             max_iteracoes = 500,

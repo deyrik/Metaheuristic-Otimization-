@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import os
 
 # ─── Função de Michalewicz ─────────────────────────────────────────────────────
 D = 2
@@ -124,7 +125,7 @@ def simulated_annealing(
         "n_epocas": n_epocas,
     }
 
-def visualizar(resultado, dominio=1):
+def visualizar(resultado, dominio=1, iteracao=1):
     
     X_MIN, X_MAX = maxEmin(dominio)
 
@@ -242,21 +243,20 @@ def visualizar(resultado, dominio=1):
     lines2, labels2 = ax4b.get_legend_handles_labels()
     ax4.legend(lines1 + lines2, labels1 + labels2, fontsize=8, loc="center right")
 
-    plt.tight_layout()
-    plt.savefig("data/simulated_annealing_michalewiczDDD.png", dpi=150, bbox_inches="tight")
-    print("Gráfico salvo: simulated_annealing_michalewiczDDD.png")
+    raiz = "data"
+    os.makedirs(raiz, exist_ok=True)
 
-# ─── Main ──────────────────────────────────────────────────────────────────────
-if __name__ == "__main__":
-    random.seed(42)
-    dominio = 1  
-    resultado = simulated_annealing(
-        T_inicial   = 10.0,
-        T_final     = 1e-5,
-        alpha       = 0.995,
-        iter_por_T  = 50,
-        passo       = 0.5,
-        verbose     = True,
-        dominio     = dominio
-    )
-    visualizar(resultado, dominio=dominio)
+    if dominio == 1:
+        pasta = os.path.join(raiz, "SA_Func2_LimiteA")
+        os.makedirs(pasta, exist_ok=True)
+        caminho = os.path.join(pasta, f"{iteracao}_simulated_annealing_funcA.png")
+
+    elif dominio == 2:
+        pasta = os.path.join(raiz, "SA_Func2_LimiteB")
+        os.makedirs(pasta, exist_ok=True)
+        caminho = os.path.join(pasta, f"{iteracao}_simulated_annealing_funcB.png")
+
+    plt.tight_layout()
+    plt.savefig(caminho, dpi=150, bbox_inches="tight")
+    plt.close()
+    print(f"\nGráfico salvo em: {caminho}")

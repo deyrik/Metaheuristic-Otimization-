@@ -2,6 +2,7 @@ import random, math, numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import os
 
 # ─── Função objetivo ───────────────────────────────────────────────────────────
 # f(x1, x2) = 100 * sqrt(|x2 - 0.01*x1²|) + 0.01 * |x1 + 10|
@@ -26,7 +27,6 @@ def maxEmin(numero):
 def clamp(x1, x2, X1_MIN, X1_MAX, X2_MIN, X2_MAX):
     return max(X1_MIN, min(X1_MAX, x1)), max(X2_MIN, min(X2_MAX, x2))
 
-# ─── Simulated Annealing ───────────────────────────────────────────────────────
 def simulated_annealing(
     T_inicial   = 50.0,
     T_final     = 1e-6,
@@ -109,8 +109,7 @@ def simulated_annealing(
         "n_epocas": n_epocas,
     }
 
-# ─── Visualização ──────────────────────────────────────────────────────────────
-def visualizar(resultado, dominio=1):
+def visualizar(resultado, dominio=1, iteracao=1):
     fig = plt.figure(figsize=(20, 6))
     fig.suptitle(
         r"Simulated Annealing — $f(x_1,x_2)=100\sqrt{|x_2-0.01\,x_1^2|}+0.01\,|x_1+10|$"
@@ -220,21 +219,22 @@ def visualizar(resultado, dominio=1):
     lines2, labels2 = ax4b.get_legend_handles_labels()
     ax4.legend(lines1 + lines2, labels1 + labels2, fontsize=8, loc="center right")
 
+   #salvando gráficosS
+    raiz = "data"
+    os.makedirs(raiz, exist_ok=True)
+
+    if dominio == 1:
+        pasta = os.path.join(raiz, "SA_Func1_LimiteA")
+        os.makedirs(pasta, exist_ok=True)
+        caminho = os.path.join(pasta, f"{iteracao}_simulated_annealing_funcA.png")
+
+    elif dominio == 2:
+        pasta = os.path.join(raiz, "SA_Func1_LimiteB")
+        os.makedirs(pasta, exist_ok=True)
+        caminho = os.path.join(pasta, f"{iteracao}_simulated_annealing_funcB.png")
+
     plt.tight_layout()
-    plt.savefig("data/simulated_annealing_michalewiczA.png", dpi=150, bbox_inches="tight")
-    print("Gráfico salvo: simulated_annealing_michalewiczA.png")
+    plt.savefig(caminho, dpi=150, bbox_inches="tight")
+    plt.close()
+    print(f"\nGráfico salvo em: {caminho}")
 
-
-# ─── Main ──────────────────────────────────────────────────────────────────────
-if __name__ == "__main__":
-    random.seed(7)
-    resultado = simulated_annealing(
-        T_inicial  = 50.0,
-        T_final    = 1e-6,
-        alpha      = 0.995,
-        iter_por_T = 60,
-        passo      = 1.5,
-        verbose    = True,
-        dominio    = 1
-    )
-    visualizar(resultado, dominio=1)

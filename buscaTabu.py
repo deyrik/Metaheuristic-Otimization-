@@ -140,7 +140,7 @@ def busca_tabu(
         "aspiracoes": aspiracoes,
     }
 
-def visualizar(resultado, dominio=1):
+def visualizar(resultado, dominio=1,iteracao=1):
 
     X1_MIN, X1_MAX, X2_MIN, X2_MAX = maxEmin(dominio)
 
@@ -212,26 +212,22 @@ def visualizar(resultado, dominio=1):
         bbox=dict(boxstyle="round,pad=0.4", fc="white", ec="#CCCCCC", alpha=0.9)
     )
 
-    # 1. Garante que a pasta 'data' existe para evitar erros
-    if not os.path.exists("data"):
-        os.makedirs("data")
+    #Criando pastas e caminhos para salvar os gráficos
+    raiz = "data"
+    os.makedirs(raiz, exist_ok=True)
 
-    # 2. Salva usando o caminho relativo
+    if dominio == 1:
+        pasta = os.path.join(raiz, "BT_Func1_LimiteA")
+        os.makedirs(pasta, exist_ok=True)
+        caminho = os.path.join(pasta, f"{iteracao}_busca_tabu_funcA.png")
+
+    elif dominio == 2:
+        pasta = os.path.join(raiz, "BT_Func1_LimiteB")
+        os.makedirs(pasta, exist_ok=True)
+        caminho = os.path.join(pasta, f"{iteracao}_busca_tabu_funcB.png")
+
     plt.tight_layout()
-    plt.savefig("data/busca_tabu_func.png", dpi=150, bbox_inches="tight")
-    print("\nGráfico salvo em: data/busca_tabu_func.png")
+    plt.savefig(caminho, dpi=150, bbox_inches="tight")
+    plt.close()
+    print(f"\nGráfico salvo em: {caminho}")
 
-# ─── Main ──────────────────────────────────────────────────────────────────────
-if __name__ == "__main__":
-    random.seed(99)
-    dominio = 1 
-    resultado = busca_tabu(
-        tamanho_tabu  = 12,
-        max_iteracoes = 300,
-        n_vizinhos    = 30,
-        passo_inicial = 2.5,
-        fator_reducao = 0.97,
-        verbose       = True,
-        limites       = dominio
-    )
-    visualizar(resultado, dominio=dominio)
