@@ -1,3 +1,7 @@
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 import src.buscaTabu as bt
 import src.buscaTabu2 as bt2
 import src.simulateAnilling as sa
@@ -6,6 +10,9 @@ import random
 import numpy as np
 import json
 import os
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
 def rodar_30(algoritmo_fn, visualizar_fn, seeds, dominio, label_algo, label_func, label_dom, kwargs):
     """
@@ -59,6 +66,112 @@ def rodar_30(algoritmo_fn, visualizar_fn, seeds, dominio, label_algo, label_func
     print(f"{'─'*50}")
 
     return bloco
+
+def ler_json(caminho_json: str) -> list[dict]:
+    """
+    Lê o arquivo JSON de resultados e retorna uma lista de dicts, cada um com:
+      - nome_arquivo : string formatada para usar no nome do arquivo salvo
+      - titulo       : título legível para o gráfico
+      - algoritmo    : "Busca Tabu" ou "Simulated Annealing"
+      - funcao       : 1 ou 2
+      - dominio      : "A" ou "B"
+      - media        : float
+      - minimo       : float
+      - maximo       : float
+      - desvio_padrao: float
+      - valores      : list[float] — os 30 resultados para plotar
+    """
+    with open(caminho_json, "r", encoding="utf-8") as fh:
+        dados = json.load(fh)
+
+    blocos = []
+    for exp in dados["experimentos"]:
+        algo_curto = "BT" if exp["algoritmo"] == "Busca Tabu" else "SA"
+        nome_arquivo = f"{algo_curto}_Func{exp['funcao']}_Dom{exp['dominio']}"
+        titulo = (
+            f"{exp['algoritmo']} | "
+            f"Função {exp['funcao']} | "
+            f"Domínio {exp['dominio']}"
+        )
+
+        blocos.append({
+            "nome_arquivo":  nome_arquivo,
+            "titulo":        titulo,
+            "algoritmo":     exp["algoritmo"],
+            "funcao":        exp["funcao"],
+            "dominio":       exp["dominio"],
+            "media":         exp["media"],
+            "minimo":        exp["minimo"],
+            "maximo":        exp["maximo"],
+            "desvio_padrao": exp["desvio_padrao"],
+            "valores":       exp["resultados_30"],
+        })
+
+    return blocos
+
+def plotar_boxplot(bloco: dict, pasta_saida: str = "data/boxplots") -> None:
+    """
+    Recebe um bloco retornado por ler_json(), plota o boxplot e salva o arquivo.
+    """
+    os.makedirs(pasta_saida, exist_ok=True)
+
+    valores = bloco["valores"]
+    media   = bloco["media"]
+    minimo  = bloco["minimo"]
+    maximo  = bloco["maximo"]
+    desvio  = bloco["desvio_padrao"]
+
+    fig, ax = plt.subplots(figsize=(7, 6))
+    fig.suptitle(bloco["titulo"], fontsize=13, fontweight="bold")
+
+    # Boxplot
+    bp = ax.boxplot(
+        valores,
+        vert        = True,
+        patch_artist= True,
+        widths      = 0.5,
+        medianprops = dict(color="#1D9E75", linewidth=2.5),
+        boxprops    = dict(facecolor="#AFA9EC", color="#534AB7", linewidth=1.5),
+        whiskerprops= dict(color="#534AB7", linewidth=1.5),
+        capprops    = dict(color="#534AB7", linewidth=2),
+        flierprops  = dict(marker="o", color="#D85A30", markersize=6,
+                           markerfacecolor="#D85A30", alpha=0.7),
+    )
+
+    # Pontos individuais (jitter) para mostrar distribuição real
+    jitter = np.random.uniform(-0.08, 0.08, size=len(valores))
+    ax.scatter(1 + jitter, valores, color="#534AB7", alpha=0.4, s=25, zorder=5)
+
+    # Linha da média
+    ax.axhline(media, color="#E11D48", linestyle="--", linewidth=1.5,
+               label=f"Média: {media:.6f}", zorder=4)
+
+    # Anotação com estatísticas
+    stats_txt = (
+        f"Média:   {media:.6f}\n"
+        f"Mínimo:  {minimo:.6f}\n"
+        f"Máximo:  {maximo:.6f}\n"
+        f"Desvio:  {desvio:.6f}\n"
+        f"N:       {len(valores)}"
+    )
+    ax.text(
+        0.97, 0.97, stats_txt,
+        transform=ax.transAxes, va="top", ha="right", fontsize=9,
+        fontfamily="monospace",
+        bbox=dict(boxstyle="round,pad=0.45", fc="white", ec="#CCCCCC", alpha=0.92)
+    )
+
+    ax.set_ylabel("f(x) — valor da função objetivo", fontsize=11)
+    ax.set_xticks([1])
+    ax.set_xticklabels([bloco["algoritmo"]], fontsize=10)
+    ax.legend(fontsize=9)
+    ax.grid(True, axis="y", linestyle=":", alpha=0.5)
+
+    caminho = os.path.join(pasta_saida, f"{bloco['nome_arquivo']}.png")
+    plt.tight_layout()
+    plt.savefig(caminho, dpi=150, bbox_inches="tight")
+    plt.close()
+    print(f"Boxplot salvo em: {caminho}")
 
 if __name__ == "__main__":
 
@@ -157,3 +270,9 @@ if __name__ == "__main__":
         json.dump(saida, fh, ensure_ascii=False, indent=2)
 
     print("\nResultados salvos em: data/resultados.json")
+
+    # ── Gera boxplots ──────────────────────────────────────────────────────────────
+    blocos = ler_json("data/resultados.json")
+    for bloco in blocos:
+        plotar_boxplot(bloco, pasta_saida="data/boxplots")
+
