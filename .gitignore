@@ -3,3 +3,8 @@ __pycache__/
 data/*
 !data/resultados.json
 !data/resultados.pdf
+TP2/.venv
+TP2/Datas
+TP2 /Datas
+TP3/.venv
+TP3/Data
