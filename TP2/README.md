@@ -1,131 +1,108 @@
-# INFOS
+# Trabalho Prático 2: Otimização com Restrições via Programação Evolutiva
+> **Programação Evolutiva (PE) com Penalidade Estática e Stochastic Ranking**  
+> Tratamento de restrições em problemas de otimização contínua e projeto mecânico.
 
-## Algoritmo Implementados:
-    
-- **Programação Evolutiva com Penalidade Estatica** 
+---
 
-- **Programação Evolutica com Stochastic Ranking**
+## Visão Geral
 
-## Instalação e Gerenciamento
+Este trabalho prático aborda a resolução de problemas de **otimização mono-objetivo com restrições** utilizando **Programação Evolutiva (Evolutionary Programming - PE)**, comparando duas abordagens clássicas para tratamento de restrições de igualdade e desigualdade:
 
-### Criar a pasta venv
+1. **Penalidade Estática (Static Penalty - ER):** Aplica multas constantes proporcionais à magnitude da violação das restrições para desfavorecer soluções infactíveis na função fitness.
+2. **Stochastic Ranking (SR):** Proposto por Runarsson & Yao, equilibra dinamicamente a função objetivo e a violação de restrições por meio de uma ordenação estocástica (usando um parâmetro de probabilidade $P_f$), permitindo explorar áreas infactíveis promissoras sem necessidade de ajuste de coeficientes de penalidade.
 
-Para criar um ambiente virtual, execute o comando:
+Ambas as abordagens foram avaliadas em **30 execuções independentes** em dois problemas desafiadores:
+- **Problema 1:** Função não linear com 4 variáveis e restrições de igualdade e desigualdade.
+- **Problema 2:** Projeto de Engenharia do **Redutor de Velocidade** (7 variáveis de projeto e 11 restrições não lineares de tensão, deflexão e geometria).
 
-```bash
-python3 -m venv .venv
+---
+
+## Resultados Experimentais (30 Execuções)
+
+| Problema | Método de Restrição | Mínimo (Melhor f(x)) | Média | Desvio Padrão |
+| :--- | :--- | :---: | :---: | :---: |
+| **Problema 1** | Penalidade Estática (ER) | **-3.887936** | **-2.242777** | 1.028224 |
+| **Problema 1** | Stochastic Ranking (SR) | -3.343527 | -0.613888 | **0.841619** |
+| **Problema 2 (Redutor)** | Penalidade Estática (ER) | **4572.335057** | **4803.132870** | 128.171221 |
+| **Problema 2 (Redutor)** | Stochastic Ranking (SR) | 5669.899691 | 5828.488285 | **74.692557** |
+
+> Dados detalhados em [`Datas/Estatisticas/`](file:///home/gabriel/Área de Trabalho/Meta Heuristica/Metaheuristic-Otimization-/TP2/Datas/Estatisticas) e relatório técnico completo em [`TP 2 - Meta-heuristica.pdf`](file:///home/gabriel/Área de Trabalho/Meta Heuristica/Metaheuristic-Otimization-/TP2/TP%202%20-%20Meta-heuristica.pdf).
+
+---
+
+## Visualizações e Análise Comparativa
+
+### Comparativo de Métricas (Mínimo, Mediana, Média e Máximo)
+
+| Problema 1 | Problema 2 (Redutor de Velocidade) |
+| :---: | :---: |
+| ![Barras Problema 1](Datas/ViewEstatiticas/Barras_Problema_1.png) | ![Barras Problema 2](Datas/ViewEstatiticas/Barras_Problema_2.png) |
+
+### Boxplots de Dispersão
+
+| Penalidade Estática | Stochastic Ranking |
+| :---: | :---: |
+| ![Boxplot P1 ER](Datas/Boxplots/Boxplot_Problema_1_-_Penalidade_Estatica.png) | ![Boxplot P1 SR](Datas/Boxplots/Boxplot_Problema_1_-_Penalidade_Stochastic_Ranking.png) |
+| ![Boxplot P2 ER](Datas/Boxplots/Boxplot_Problema_2_-_Penalidade_Estatica.png) | ![Boxplot P2 SR](Datas/Boxplots/Boxplot_Problema_2_-_Stochastic_Ranking.png) |
+
+---
+
+## Estrutura de Arquivos
+
+```text
+TP2/
+├── Makefile                     # Automação de execução
+├── requirements.txt             # Dependências Python (numpy, matplotlib, seaborn)
+├── README.md                    # Documentação do TP2
+├── TP 2 - Meta-heuristica.pdf   # Relatório técnico do trabalho
+├── PE_ER_Problem01.py           # Problema 1 com Penalidade Estática
+├── PE_SR_Problem01.py           # Problema 1 com Stochastic Ranking
+├── PE_ER_Problem02.py           # Problema 2 (Redutor) com Penalidade Estática
+├── PE_SR_Problem02.py           # Problema 2 (Redutor) com Stochastic Ranking
+├── geradorGraficos.py           # Script para consolidar JSONs e plotar gráficos
+└── Datas/
+    ├── Boxplots/                # Boxplots das 30 iterações de cada algoritmo
+    ├── Estatisticas/            # JSONs com dados numéricos completos
+    └── ViewEstatiticas/         # Gráficos de barras comparativas
 ```
 
-Isso irá criar uma pasta `.venv` no diretório atual com todos os arquivos necessários para o ambiente virtual.
-
-### Ativar o venv
-
-Para ativar o ambiente virtual, execute:
-
-```bash
-source .venv/bin/activate
-```
-
-Após ativar, você verá `(.venv)` no início da sua linha de comando, indicando que o ambiente virtual está ativo.
-
-### Desativar o venv
-
-Para desativar o ambiente virtual, execute:
-
-```bash
-deactivate
-```
-
-Após desativar, o prefixo `(.venv)` desaparecerá da sua linha de comando, retornando ao ambiente Python padrão.
-
-## Configuração Automática no VSCode
-
-Para ativar/desativar o `.venv` automaticamente no VSCode:
-
-1. Pressione `Ctrl + ,` para abrir as configurações
-2. Na barra de busca, digite: `python terminal activat`
-3. Ative a caixa: **Python › Terminal: Activate Environment**
-
-## Dependências Instaladas
-
-Pacotes instalados no ambiente virtual:
-
-```bash
-pip install numpy
-pip install matplotlib
-pip install seaborn
-
-```
-
-Ou em uma única linha:
-
-```bash
-pip install numpy matplotlib seaborn 
-```
-
-## Estrutura do Projeto
-
-### Descrição dos Arquivos
-
-- **PE_ER_Problem01.py**: Implementação do Problema 1 utilizando **Programação Evolutiva - Estática Restrição (ER)**. Resolve um problema de otimização com 4 variáveis (x1, x2, u1, u2), incluindo restrições de desigualdade e igualdade. Usa penalidades fixas (multas estáticas) para lidar com violações de restrições. Gera estatísticas e resultados em formato JSON.
-
-- **PE_ER_Problem02.py**: Implementação do Problema 2 (Redutor de Velocidade) utilizando **Programação Evolutiva - Estática Restrição (ER)**. Resolve um problema de engenharia com 7 variáveis e 11 restrições de desigualdade. Usa penalidades estáticas para garantir a viabilidade das soluções. Salva resultados das execuções em arquivos JSON.
-
-- **PE_SR_Problem01.py**: Implementação do Problema 1 utilizando **Stochastic Ranking (SR)**. Implementa a mesma formulação do PE_ER_Problem01.py, mas utiliza classificação estocástica para ordenar soluções, oferecendo uma abordagem alternativa ao tratamento de restrições. Gera estatísticas das execuções.
-
-- **PE_SR_Problem02.py**: Implementação do Problema 2 (Redutor de Velocidade) utilizando **Stochastic Ranking (SR)**. Resolve o mesmo problema que PE_ER_Problem02.py, mas emprega o método de classificação estocástica para avaliar soluções viáveis. Armazena resultados em formato JSON.
-
-- **geradorGraficos.py**: Utilitário responsável por gerar visualizações dos resultados das execuções. Carrega dados JSON das estatísticas, cria boxplots para análise de convergência e gera gráficos de barras comparando métricas (mínimo, mediana, máximo e desvio padrão) entre os diferentes algoritmos e problemas.
-
-### Pasta data/
-
-Armazena os resultados das execuções dos algoritmos:
-
-- **Datas/Boxplots**: Pasta contendo os boxplots referentes a cada conjunto (de 30 iterações) dos algoritmos.
-
-- **Datas/Estatisticas**: Pasta contendo Estatiticas especificas de cada iteração e cada algoritmo. Dados em .Json
-
-- **Datas/ViewEstatiticas**: Pasta contendo os graficos das estatisticas para melhor visualização 
-
-
+---
 
 ## Como Executar
 
-### Executar o programa principal
-
-OBS: lembre-se de executar dentro do ambiente virtual (.venv).
-
-Para executar de maneira completa os algortimos:
+### 1. Usando Makefile (Recomendado)
 
 ```bash
-python PE_ER_Problem01.py && \
-python PE_ER_Problem02.py && \
-python PE_SR_Problem01.py && \
-python PE_SR_Problem02.py 
+# Configurar ambiente virtual e dependências
+make setup
+
+# Executar todos os 4 experimentos completos
+make run
+
+# Executar apenas o Problema 1 ou Problema 2
+make run-p1
+make run-p2
+
+# Atualizar e regenerar os gráficos
+make plots
+
+# Limpar caches
+make clean
 ```
 
-### Executar arquivos individuais
-
-Também é possivel testar ou executar um algoritmo específico isoladamente, gerando resultados apenas de tal:
+### 2. Execução Manual
 
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+# Execuções individuais:
 python PE_ER_Problem01.py
-```
-```bash
-python PE_ER_Problem02.py
-```
-```bash
 python PE_SR_Problem01.py
+python PE_ER_Problem02.py
+python PE_SR_Problem02.py
+
+# Gerar gráficos:
+python geradorGraficos.py
 ```
-```bash
-python PE_SR_Problem02.py 
-```
-
-
-
-
-
-
-
-
-
