@@ -1,10 +1,42 @@
-.venv
+# =========================================
+# Ambientes Virtuais e Caches Python
+# =========================================
+.venv/
+*/.venv/
+venv/
+*/venv/
 __pycache__/
-data/*
-!data/resultados.json
-!data/resultados.pdf
-TP2/.venv
-TP2/Datas
-TP2 /Datas
-TP3/.venv
-TP3/Data
+*/__pycache__/
+*/*/__pycache__/
+*.py[cod]
+*$py.class
+
+# =========================================
+# Arquivos de Sistema e Editores
+# =========================================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================================
+# Dados e Resultados de Execuções Locais
+# =========================================
+# TP1: Ignorar frames e execuções intermediárias; manter boxplots, PDF, JSON e imagens de exemplo do README
+TP1/data/*
+!TP1/data/resultados.json
+!TP1/data/resultados.pdf
+!TP1/data/boxplots/
+TP1/data/boxplots/*
+!TP1/data/boxplots/*.png
+!TP1/data/BT_Func1_LimiteA/
+TP1/data/BT_Func1_LimiteA/*
+!TP1/data/BT_Func1_LimiteA/1_busca_tabu_funcA.png
+!TP1/data/SA_Func1_LimiteA/
+TP1/data/SA_Func1_LimiteA/*
+!TP1/data/SA_Func1_LimiteA/1_simulated_annealing_funcA.png
+
+# TP2: Manter gráficos (Boxplots, ViewEstatiticas) e JSONs consolidados de estatísticas
+# Caso existam arquivos temporários adicionais, ignorar
